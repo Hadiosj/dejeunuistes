@@ -30,6 +30,66 @@ const CUISINE_TYPES = [
   "Autre"
 ];
 
+// --- ERROR TOAST COMPONENT ---
+function ErrorToast({ message, onClose }) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 5000); // Auto-close after 5 seconds
+
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: '20px',
+      right: '20px',
+      zIndex: 9999,
+      maxWidth: '400px',
+      animation: 'slideIn 0.3s ease-out'
+    }}>
+      <div className="nes-container is-rounded is-dark" style={{
+        backgroundColor: '#d95941',
+        color: 'white',
+        padding: '15px'
+      }}>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start'}}>
+          <div style={{flex: 1, fontSize: '11px', lineHeight: '1.4'}}>
+            <strong style={{fontSize: '12px'}}>❌ Erreur</strong>
+            <div style={{marginTop: '5px'}}>{message}</div>
+          </div>
+          <button 
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'white',
+              fontSize: '16px',
+              cursor: 'pointer',
+              marginLeft: '10px'
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+      <style>{`
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 // --- MAP EVENTS COMPONENT ---
 // This component accesses the map instance and passes it to parent
 function MapEvents({ setMapInstance }) {
@@ -45,34 +105,6 @@ function MapEvents({ setMapInstance }) {
 }
 
 // --- CUSTOM PIXEL PIN ---
-// Create a pixelated 8-bit style marker matching the NES.css theme
-// const createPixelPin = () => {
-//   return L.divIcon({
-//     html: `
-//       <div style="
-//         width: 28px;
-//         height: 28px;
-//         background: #e76e55;
-//         border: 3px solid #000;
-//         box-shadow: 
-//           inset -3px -3px 0 #d95941,
-//           inset 3px 3px 0 #ff9580,
-//           4px 4px 0 rgba(0,0,0,0.25);
-//         display: flex;
-//         align-items: center;
-//         justify-content: center;
-//         font-size: 16px;
-//         position: relative;
-//         image-rendering: pixelated;
-//       ">🍔</div>
-//     `,
-//     className: 'pixel-marker-block',
-//     iconSize: [28, 28],
-//     iconAnchor: [14, 28],
-//     popupAnchor: [0, -28]
-//   });
-// };
-
 const createPixelPin = (restaurantType) => {
   // Map restaurant types to emojis
   const iconMap = {
@@ -129,7 +161,7 @@ const createPixelPin = (restaurantType) => {
 
 
 // --- RESTAURANT SEARCH COMPONENT (GOOGLE PLACES API) ---
-function RestaurantSearch({ setShowPreview, setPreviewData }) {
+function RestaurantSearch({ setShowPreview, setPreviewData, inModal = false }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -256,7 +288,7 @@ function RestaurantSearch({ setShowPreview, setPreviewData }) {
   return (
     <div style={{ 
       position: 'relative', 
-      width: '500px',
+      width: inModal ? '100%' : '500px',
       maxWidth: '90vw'
     }}>
       <input
@@ -275,24 +307,28 @@ function RestaurantSearch({ setShowPreview, setPreviewData }) {
         <div 
           className="nes-container is-rounded" 
           style={{
-            position: 'absolute',
-            top: '60px',
+            position: inModal ? 'relative' : 'absolute',
+            top: inModal ? '10px' : '60px',
             left: '0',
             right: '0',
-            maxHeight: '400px',
+            maxHeight: inModal ? '350px' : '600px',
             overflowY: 'auto',
             zIndex: 1001,
             backgroundColor: 'white'
           }}
           onMouseEnter={() => {
-            // Disable map scrolling when hovering over results
-            const map = document.querySelector('.leaflet-container');
-            if (map) map.style.pointerEvents = 'none';
+            if (!inModal) {
+              // Disable map scrolling when hovering over results
+              const map = document.querySelector('.leaflet-container');
+              if (map) map.style.pointerEvents = 'none';
+            }
           }}
           onMouseLeave={() => {
-            // Re-enable map scrolling
-            const map = document.querySelector('.leaflet-container');
-            if (map) map.style.pointerEvents = 'auto';
+            if (!inModal) {
+              // Re-enable map scrolling
+              const map = document.querySelector('.leaflet-container');
+              if (map) map.style.pointerEvents = 'auto';
+            }
           }}
         >
           {loading && (
@@ -371,11 +407,13 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
   const [previewData, setPreviewData] = useState(null);
   const [selectedResto, setSelectedResto] = useState(null);
   const [showSidePanel, setShowSidePanel] = useState(false);
   const [loading, setLoading] = useState(false);
   const [mapRef, setMapRef] = useState(null);
+  const [error, setError] = useState(null);
   
   // Form State
   const [formData, setFormData] = useState({
@@ -409,12 +447,37 @@ export default function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const q = query(collection(db, "restaurants"), orderBy("name"));
-      const querySnapshot = await getDocs(q);
-      setRestos(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      try {
+        const q = query(collection(db, "restaurants"), orderBy("name"));
+        const querySnapshot = await getDocs(q);
+        setRestos(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } catch (err) {
+        logError("Erreur lors du chargement des restaurants", { context: 'fetchData', error: err.message });
+      }
     };
     fetchData();
   }, []);
+
+  // Error logging function
+  const logError = async (errorMessage, errorDetails = {}) => {
+    console.error('Error:', errorMessage, errorDetails);
+    
+    // Show toast to user
+    setError(errorMessage);
+
+    // Log to Firebase (optional)
+    try {
+      await addDoc(collection(db, "error_logs"), {
+        message: errorMessage,
+        details: errorDetails,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        url: window.location.href
+      });
+    } catch (err) {
+      console.error('Failed to log error:', err);
+    }
+  };
 
   // Helper to get price level display
   const getPriceDisplay = (priceLevel) => {
@@ -432,37 +495,38 @@ export default function App() {
   const saveResto = async (e) => {
     e.preventDefault();
     
-    if (!formData.halal || formData.halal === "") {
-      alert("Veuillez sélectionner une certification halal");
-      return;
-    }
-
-    if (!formData.type || formData.type === "") {
-      alert("Veuillez sélectionner un type de cuisine");
-      return;
-    }
-
-    if (formData.type === "Autre" && (!formData.customType || formData.customType.trim() === "")) {
-      alert("Veuillez préciser le type de cuisine");
-      return;
-    }
-    
-    setLoading(true);
-    const finalHalal = formData.halal === "Autre" ? formData.customHalal : formData.halal;
-    const finalType = formData.type === "Autre" ? formData.customType : formData.type;
-    
-    // Build initial user ratings array
-    const initialUserRatings = [];
-    if (formData.initialUserName && formData.initialRating) {
-      initialUserRatings.push({
-        userName: formData.initialUserName,
-        rating: parseFloat(formData.initialRating),
-        comment: formData.initialRatingComment || "",
-        date: new Date().toISOString()
-      });
-    }
-    
     try {
+      if (!formData.halal || formData.halal === "") {
+        throw new Error("Veuillez sélectionner une certification halal");
+      }
+
+      if (!formData.type || formData.type === "") {
+        throw new Error("Veuillez sélectionner un type de cuisine");
+      }
+
+      if (formData.type === "Autre" && (!formData.customType || formData.customType.trim() === "")) {
+        throw new Error("Veuillez préciser le type de cuisine");
+      }
+
+      if (!formData.coords || !Array.isArray(formData.coords) || formData.coords.length !== 2) {
+        throw new Error("Coordonnées manquantes. Veuillez sélectionner un restaurant depuis la recherche.");
+      }
+      
+      setLoading(true);
+      const finalHalal = formData.halal === "Autre" ? formData.customHalal : formData.halal;
+      const finalType = formData.type === "Autre" ? formData.customType : formData.type;
+      
+      // Build initial user ratings array
+      const initialUserRatings = [];
+      if (formData.initialUserName && formData.initialRating) {
+        initialUserRatings.push({
+          userName: formData.initialUserName,
+          rating: parseFloat(formData.initialRating),
+          comment: formData.initialRatingComment || "",
+          date: new Date().toISOString()
+        });
+      }
+      
       await addDoc(collection(db, "restaurants"), { 
         name: formData.name,
         type: finalType,
@@ -509,23 +573,25 @@ export default function App() {
       setRestos(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       
     } catch (err) {
-      console.error(err);
-      alert("Erreur lors de la sauvegarde");
+      logError(err.message, { 
+        context: 'saveResto',
+        formData: formData
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const addUserRating = async (e) => {
     e.preventDefault();
     
-    if (!ratingData.userName || ratingData.userName.trim() === "") {
-      alert("Veuillez entrer votre nom");
-      return;
-    }
-    
-    setLoading(true);
-    
     try {
+      if (!ratingData.userName || ratingData.userName.trim() === "") {
+        throw new Error("Veuillez entrer votre nom");
+      }
+      
+      setLoading(true);
+      
       const newRating = {
         userName: ratingData.userName,
         rating: parseFloat(ratingData.rating),
@@ -560,10 +626,14 @@ export default function App() {
       setSelectedResto(updatedResto);
       
     } catch (err) {
-      console.error(err);
-      alert("Erreur lors de l'ajout de la note");
+      logError(err.message, {
+        context: 'addUserRating',
+        restoId: selectedResto?.id,
+        ratingData: ratingData
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const confirmAddRestaurant = () => {
@@ -589,13 +659,14 @@ export default function App() {
         initialRatingComment: ""
       });
       setShowPreview(false);
+      setShowSearchModal(false);
       setShowModal(true);
     }
   };
 
   const pickRandomRestaurant = () => {
     if (restos.length === 0) {
-      alert("Aucun restaurant dans la liste!");
+      setError("Aucun restaurant dans la liste!");
       return;
     }
 
@@ -622,15 +693,62 @@ export default function App() {
   return (
     <div style={{ height: "100vh", width: "100vw", position: "relative" }}>
       
+      {/* Error Toast */}
+      {error && (
+        <ErrorToast 
+          message={error} 
+          onClose={() => setError(null)} 
+        />
+      )}
+
       {/* UI BAS GAUCHE */}
       <div className="ui-overlay" style={{top: 'auto', bottom: '20px', left: '20px', zIndex: 900}}>
         <div className="nes-container is-rounded is-dark with-title">
           <p className="title">🌾 Les Dejeunuistes 🌾</p>
-          <button className="nes-btn is-primary" onClick={() => setShowModal(true)}>+ Ajouter</button>
+          <button className="nes-btn is-primary" onClick={() => setShowSearchModal(true)}>
+            + Ajouter
+          </button>
           <button className="nes-btn is-warning" style={{marginLeft: '10px'}} 
             onClick={pickRandomRestaurant}>🎲 Au hasard</button>
         </div>
       </div>
+{/* SEARCH MODAL */}
+{showSearchModal && (
+  <div className="modal-overlay">
+    <div className="modal-content nes-container is-rounded" style={{
+      maxWidth: '600px', 
+      minHeight: '500px',
+      maxHeight: '80vh',
+      overflow: 'visible',
+      margin: '20px'
+    }}>
+      <h3 style={{textAlign: 'center', fontSize: '16px', marginBottom: '15px'}}>
+        🔍 Rechercher un restaurant
+      </h3>
+      <p style={{fontSize: '11px', textAlign: 'center', marginBottom: '20px', color: '#666'}}>
+        Utilisez la barre de recherche pour trouver le restaurant que vous souhaitez ajouter
+      </p>
+      
+      <div style={{marginBottom: '20px', minHeight: '350px'}}>
+        <RestaurantSearch
+          setShowPreview={setShowPreview}
+          setPreviewData={setPreviewData}
+          inModal={true}
+        />
+      </div>
+
+      <div style={{textAlign: 'center', marginTop: 'auto'}}>
+        <button 
+          className="nes-btn is-error" 
+          onClick={() => setShowSearchModal(false)}
+          style={{fontSize: '11px'}}
+        >
+          Annuler
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
       {/* SIDE PANEL - Google Maps Style */}
       {showSidePanel && selectedResto && (
@@ -902,22 +1020,25 @@ export default function App() {
           />
         </div>
 
-      {restos.map((r) => (
-        <Marker 
-          key={r.id} 
-          position={r.coords} 
-          icon={createPixelPin(r.type)} // Pass the restaurant type
-          eventHandlers={{
-            click: () => handleMarkerClick(r)
-          }}
-        >
-          <Popup>
-            <div style={{textAlign: 'center', fontSize: '11px', padding: '4px'}}>
-              <strong>{r.name}</strong>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+        {restos
+          .filter(r => r.coords && Array.isArray(r.coords) && r.coords.length === 2)
+          .map((r) => (
+            <Marker 
+              key={r.id} 
+              position={r.coords} 
+              icon={createPixelPin(r.type)}
+              eventHandlers={{
+                click: () => handleMarkerClick(r)
+              }}
+            >
+              <Popup>
+                <div style={{textAlign: 'center', fontSize: '11px', padding: '4px'}}>
+                  <strong>{r.name}</strong>
+                </div>
+              </Popup>
+            </Marker>
+          ))
+        }
       </MapContainer>
 
       {/* ADD RATING MODAL */}
