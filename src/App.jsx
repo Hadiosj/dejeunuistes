@@ -284,12 +284,12 @@ function RestaurantSearch({ setShowPreview, setPreviewData }) {
             zIndex: 1001,
             backgroundColor: 'white'
           }}
-          onMouseEnter={(e) => {
+          onMouseEnter={() => {
             // Disable map scrolling when hovering over results
             const map = document.querySelector('.leaflet-container');
             if (map) map.style.pointerEvents = 'none';
           }}
-          onMouseLeave={(e) => {
+          onMouseLeave={() => {
             // Re-enable map scrolling
             const map = document.querySelector('.leaflet-container');
             if (map) map.style.pointerEvents = 'auto';
@@ -509,6 +509,7 @@ export default function App() {
       setRestos(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       
     } catch (err) {
+      console.error(err);
       alert("Erreur lors de la sauvegarde");
     }
     setLoading(false);
@@ -559,6 +560,7 @@ export default function App() {
       setSelectedResto(updatedResto);
       
     } catch (err) {
+      console.error(err);
       alert("Erreur lors de l'ajout de la note");
     }
     setLoading(false);
