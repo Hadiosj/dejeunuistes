@@ -1,0 +1,42 @@
+name: Deploy to Firebase
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the code
+      - uses: actions/checkout@v4
+
+      # Set up Node.js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Create .env file from secrets
+      - name: Create .env file
+        run: |
+          echo "VITE_GOOGLE_PLACES_API_KEY=${{ secrets.VITE_GOOGLE_PLACES_API_KEY }}" > .env
+
+      # Build the project
+      - name: Build project
+        run: npm run build
+
+      # Deploy to Firebase
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          projectId: pixel-resto-paris
+          channelId: live
