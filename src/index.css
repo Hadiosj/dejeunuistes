@@ -62,3 +62,16 @@ html, body, #root {
   font-family: 'Press Start 2P', cursive !important;
   font-size: 10px !important;
 }
+
+/* Remove white padding from restaurant name tooltips */
+.leaflet-tooltip.restaurant-label {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.leaflet-tooltip.restaurant-label::before {
+  display: none !important;
+}
