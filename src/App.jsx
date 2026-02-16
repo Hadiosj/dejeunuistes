@@ -33,7 +33,7 @@ const CUISINE_TYPES = [
   "Américain",
   "Burger",
   "Steakhouse",
-  "Méditerranéen",  
+  "Méditerranéen",
   "Café",
   "Boulangerie",
   "Autre"
@@ -65,12 +65,12 @@ function ErrorToast({ message, onClose }) {
         color: 'white',
         padding: '15px'
       }}>
-        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start'}}>
-          <div style={{flex: 1, fontSize: '11px', lineHeight: '1.4'}}>
-            <strong style={{fontSize: '12px'}}>❌ Erreur</strong>
-            <div style={{marginTop: '5px'}}>{message}</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+          <div style={{ flex: 1, fontSize: '11px', lineHeight: '1.4' }}>
+            <strong style={{ fontSize: '12px' }}>❌ Erreur</strong>
+            <div style={{ marginTop: '5px' }}>{message}</div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             style={{
               background: 'none',
@@ -105,13 +105,13 @@ function ErrorToast({ message, onClose }) {
 // This component accesses the map instance and passes it to parent
 function MapEvents({ setMapInstance }) {
   const map = useMap();
-  
+
   useEffect(() => {
     if (map) {
       setMapInstance(map);
     }
   }, [map, setMapInstance]);
-  
+
   return null;
 }
 
@@ -213,20 +213,20 @@ function RestaurantSearch({ setShowPreview, setPreviewData, inModal = false }) {
     searchTimeoutRef.current = setTimeout(async () => {
       setLoading(true);
       setShowSuggestions(true);
-      
+
       // Create new abort controller for this request
       abortControllerRef.current = new AbortController();
-      
+
       try {
         const API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
-        
+
         if (!API_KEY) {
           console.error('API Key not found! Make sure your .env file is set up correctly.');
           alert('Clé API Google manquante. Vérifiez votre fichier .env');
           setLoading(false);
           return;
         }
-        
+
         // Use Google Places API Text Search with more fields
         const response = await fetch(
           'https://places.googleapis.com/v1/places:searchText',
@@ -256,7 +256,7 @@ function RestaurantSearch({ setShowPreview, setPreviewData, inModal = false }) {
         );
 
         const data = await response.json();
-        
+
         if (data.places) {
           const results = data.places.map((place) => ({
             id: place.id,
@@ -294,7 +294,7 @@ function RestaurantSearch({ setShowPreview, setPreviewData, inModal = false }) {
   // Helper function to extract cuisine type from Google place types
   const extractCuisineType = (types) => {
     if (!types) return '';
-    
+
     const cuisineMap = {
       'chinese_restaurant': 'Chinois',
       'japanese_restaurant': 'Japonais',
@@ -334,8 +334,8 @@ function RestaurantSearch({ setShowPreview, setPreviewData, inModal = false }) {
   };
 
   return (
-    <div style={{ 
-      position: 'relative', 
+    <div style={{
+      position: 'relative',
       width: inModal ? '100%' : '100%',
       maxWidth: inModal ? '100%' : '500px'
     }}>
@@ -350,10 +350,10 @@ function RestaurantSearch({ setShowPreview, setPreviewData, inModal = false }) {
         }}
         style={{ width: '100%', fontSize: '12px' }}
       />
-      
+
       {showSuggestions && searchQuery.length >= 3 && (
-        <div 
-          className="nes-container is-rounded" 
+        <div
+          className="nes-container is-rounded"
           style={{
             position: inModal ? 'relative' : 'absolute',
             top: inModal ? '10px' : '60px',
@@ -380,7 +380,7 @@ function RestaurantSearch({ setShowPreview, setPreviewData, inModal = false }) {
           }}
         >
           {loading && (
-            <div style={{padding: '20px', textAlign: 'center'}}>
+            <div style={{ padding: '20px', textAlign: 'center' }}>
               <div style={{
                 display: 'inline-flex',
                 gap: '8px',
@@ -409,7 +409,7 @@ function RestaurantSearch({ setShowPreview, setPreviewData, inModal = false }) {
             </div>
           )}
           {!loading && suggestions.length === 0 && (
-            <p style={{fontSize: '11px', padding: '20px', textAlign: 'center'}}>
+            <p style={{ fontSize: '11px', padding: '20px', textAlign: 'center' }}>
               😕 Aucun restaurant trouvé
             </p>
           )}
@@ -426,20 +426,20 @@ function RestaurantSearch({ setShowPreview, setPreviewData, inModal = false }) {
                 backgroundColor: 'white'
               }}
             >
-              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start'}}>
-                <strong style={{fontSize: '12px', flex: 1}}>{resto.name}</strong>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                <strong style={{ fontSize: '12px', flex: 1 }}>{resto.name}</strong>
                 {resto.rating && (
-                  <span style={{fontSize: '10px', marginLeft: '10px', whiteSpace: 'nowrap'}}>
+                  <span style={{ fontSize: '10px', marginLeft: '10px', whiteSpace: 'nowrap' }}>
                     ⭐ {resto.rating.toFixed(1)} ({resto.ratingCount})
                   </span>
                 )}
               </div>
               {resto.cuisine && (
-                <div style={{fontSize: '10px', color: '#666', marginTop: '4px'}}>
+                <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
                   🍴 {resto.cuisine}
                 </div>
               )}
-              <div style={{fontSize: '9px', color: '#999', marginTop: '2px', lineHeight: '1.3'}}>
+              <div style={{ fontSize: '9px', color: '#999', marginTop: '2px', lineHeight: '1.3' }}>
                 📍 {resto.address}
               </div>
             </div>
@@ -463,14 +463,14 @@ export default function App() {
   const [mapRef, setMapRef] = useState(null);
   const [error, setError] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // Form State
   const [formData, setFormData] = useState({
-    name: "", 
-    type: "", 
+    name: "",
+    type: "",
     customType: "",
-    halal: "", 
-    customHalal: "", 
+    halal: "",
+    customHalal: "",
     googleRating: null,
     googleRatingCount: 0,
     googleAddress: "",
@@ -479,7 +479,7 @@ export default function App() {
     googlePriceLevel: null,
     googleOpeningHours: null,
     userRatings: [],
-    coords: null, 
+    coords: null,
     gmaps: "",
     // Initial rating fields - NOW REQUIRED
     initialUserName: "",
@@ -499,24 +499,24 @@ export default function App() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Error logging function with improved user-friendly messages
   const logError = useCallback(async (errorMessage, errorDetails = {}) => {
     console.error('Error:', errorMessage, errorDetails);
-    
+
     // Show user-friendly error message
     let userMessage = errorMessage;
-    
+
     // Check for common Firebase error codes
     if (errorDetails.error) {
       const errorCode = errorDetails.error;
-      
+
       if (errorCode.includes('permission-denied')) {
         userMessage = "❌ Vous n'avez pas la permission d'effectuer cette action. Vérifiez vos droits d'accès.";
       } else if (errorCode.includes('unavailable')) {
@@ -531,7 +531,7 @@ export default function App() {
         userMessage = "❌ La requête a pris trop de temps. Veuillez réessayer.";
       }
     }
-    
+
     // Show toast to user
     setError(userMessage);
 
@@ -556,9 +556,9 @@ export default function App() {
       const querySnapshot = await getDocs(q);
       setRestos(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     } catch (err) {
-      logError("Erreur lors du chargement des restaurants", { 
-        context: 'refreshRestaurants', 
-        error: err.message 
+      logError("Erreur lors du chargement des restaurants", {
+        context: 'refreshRestaurants',
+        error: err.message
       });
     }
   }, [logError]);
@@ -582,7 +582,7 @@ export default function App() {
 
   const saveResto = async (e) => {
     e.preventDefault();
-    
+
     try {
       if (!formData.halal || formData.halal === "") {
         throw new Error("Veuillez sélectionner une certification halal");
@@ -614,11 +614,11 @@ export default function App() {
       if (isNaN(rating) || rating < 1 || rating > 5) {
         throw new Error("La note doit être comprise entre 1 et 5");
       }
-      
+
       setLoading(true);
       const finalHalal = formData.halal === "Autre" ? formData.customHalal : formData.halal;
       const finalType = formData.type === "Autre" ? formData.customType : formData.type;
-      
+
       // Build initial user ratings array - now always includes at least one rating
       const initialUserRatings = [{
         userName: formData.initialUserName,
@@ -626,8 +626,8 @@ export default function App() {
         comment: formData.initialRatingComment || "",
         date: new Date().toISOString()
       }];
-      
-      await addDoc(collection(db, "restaurants"), { 
+
+      await addDoc(collection(db, "restaurants"), {
         name: formData.name,
         type: finalType,
         halal: finalHalal,
@@ -642,14 +642,14 @@ export default function App() {
         coords: formData.coords,
         gmaps: formData.gmaps
       });
-      
+
       // Reset form to default values after successful save
       setFormData({
-        name: "", 
-        type: "", 
+        name: "",
+        type: "",
         customType: "",
-        halal: "", 
-        customHalal: "", 
+        halal: "",
+        customHalal: "",
         googleRating: null,
         googleRatingCount: 0,
         googleAddress: "",
@@ -658,20 +658,20 @@ export default function App() {
         googlePriceLevel: null,
         googleOpeningHours: null,
         userRatings: [],
-        coords: null, 
+        coords: null,
         gmaps: "",
         initialUserName: "",
         initialRating: "",
         initialRatingComment: ""
       });
-      
+
       setShowModal(false);
-      
+
       // Refresh the restaurant list using extracted function
       await refreshRestaurants();
-      
+
     } catch (err) {
-      logError(err.message, { 
+      logError(err.message, {
         context: 'saveResto',
         formData: formData
       });
@@ -682,7 +682,7 @@ export default function App() {
 
   const addUserRating = async (e) => {
     e.preventDefault();
-    
+
     try {
       if (!ratingData.userName || ratingData.userName.trim() === "") {
         throw new Error("Veuillez entrer votre nom");
@@ -697,41 +697,41 @@ export default function App() {
       if (isNaN(rating) || rating < 1 || rating > 5) {
         throw new Error("La note doit être comprise entre 1 et 5");
       }
-      
+
       setLoading(true);
-      
+
       const newRating = {
         userName: ratingData.userName,
         rating: rating,
         comment: ratingData.comment,
         date: new Date().toISOString()
       };
-      
+
       const updatedRatings = [...(selectedResto.userRatings || []), newRating];
-      
+
       const restoRef = doc(db, "restaurants", selectedResto.id);
       await updateDoc(restoRef, {
         userRatings: updatedRatings
       });
-      
+
       // Reset rating form
       setRatingData({
         userName: "",
-        rating: 5,
+        rating: "",
         comment: ""
       });
-      
+
       setShowRatingModal(false);
-      
+
       // Refresh the restaurant list using extracted function
       await refreshRestaurants();
-      
+
       // Update selected resto
       const updatedResto = restos.find(r => r.id === selectedResto.id);
       if (updatedResto) {
         setSelectedResto(updatedResto);
       }
-      
+
     } catch (err) {
       logError(err.message, {
         context: 'addUserRating',
@@ -779,11 +779,11 @@ export default function App() {
 
     // Pick a random restaurant
     const randomResto = restos[Math.floor(Math.random() * restos.length)];
-    
+
     // Show in side panel
     setSelectedResto(randomResto);
     setShowSidePanel(true);
-    
+
     if (mapRef) {
       // Fly to the marker location with animation
       mapRef.flyTo(randomResto.coords, MAP_ZOOM_LEVEL_DETAIL, {
@@ -799,20 +799,20 @@ export default function App() {
 
   return (
     <div style={{ height: "100vh", width: "100vw", position: "relative" }}>
-      
+
       {/* Error Toast */}
       {error && (
-        <ErrorToast 
-          message={error} 
-          onClose={() => setError(null)} 
+        <ErrorToast
+          message={error}
+          onClose={() => setError(null)}
         />
       )}
 
       {/* UI BAS GAUCHE - Responsive */}
       <div className="ui-overlay" style={{
-        top: 'auto', 
-        bottom: isMobile ? '10px' : '20px', 
-        left: isMobile ? '10px' : '20px', 
+        top: 'auto',
+        bottom: isMobile ? '10px' : '20px',
+        left: isMobile ? '10px' : '20px',
         right: isMobile ? '10px' : 'auto',
         zIndex: 900
       }}>
@@ -833,8 +833,8 @@ export default function App() {
             flexDirection: isMobile ? 'column' : 'row',
             width: '100%'
           }}>
-            <button 
-              className="nes-btn is-primary" 
+            <button
+              className="nes-btn is-primary"
               onClick={() => setShowSearchModal(true)}
               style={{
                 fontSize: isMobile ? '10px' : '11px',
@@ -844,8 +844,8 @@ export default function App() {
             >
               + Ajouter
             </button>
-            <button 
-              className="nes-btn is-warning" 
+            <button
+              className="nes-btn is-warning"
               onClick={pickRandomRestaurant}
               style={{
                 fontSize: isMobile ? '10px' : '11px',
@@ -871,14 +871,14 @@ export default function App() {
             padding: isMobile ? '12px' : '20px'
           }}>
             <h3 style={{
-              textAlign: 'center', 
-              fontSize: isMobile ? '14px' : '16px', 
+              textAlign: 'center',
+              fontSize: isMobile ? '14px' : '16px',
               marginBottom: '15px'
             }}>
               🔍 Rechercher un restaurant
             </h3>
-            
-            <div style={{marginBottom: '20px', minHeight: isMobile ? '250px' : '350px'}}>
+
+            <div style={{ marginBottom: '20px', minHeight: isMobile ? '250px' : '350px' }}>
               <RestaurantSearch
                 setShowPreview={setShowPreview}
                 setPreviewData={setPreviewData}
@@ -886,11 +886,11 @@ export default function App() {
               />
             </div>
 
-            <div style={{textAlign: 'center', marginTop: 'auto'}}>
-              <button 
-                className="nes-btn is-error" 
+            <div style={{ textAlign: 'center', marginTop: 'auto' }}>
+              <button
+                className="nes-btn is-error"
                 onClick={() => setShowSearchModal(false)}
-                style={{fontSize: isMobile ? '10px' : '11px'}}
+                style={{ fontSize: isMobile ? '10px' : '11px' }}
               >
                 Annuler
               </button>
@@ -928,17 +928,17 @@ export default function App() {
             zIndex: 10
           }}>
             <h2 style={{
-              fontSize: isMobile ? '12px' : '14px', 
-              margin: 0, 
+              fontSize: isMobile ? '12px' : '14px',
+              margin: 0,
               fontWeight: 'bold'
             }}>
               Détails du Restaurant
             </h2>
-            <button 
+            <button
               onClick={() => setShowSidePanel(false)}
               className="nes-btn is-error"
               style={{
-                fontSize: isMobile ? '9px' : '10px', 
+                fontSize: isMobile ? '9px' : '10px',
                 padding: isMobile ? '3px 8px' : '4px 10px'
               }}
             >
@@ -947,7 +947,7 @@ export default function App() {
           </div>
 
           {/* Content */}
-          <div style={{padding: isMobile ? '12px' : '16px', flex: 1}}>
+          <div style={{ padding: isMobile ? '12px' : '16px', flex: 1 }}>
             {/* Restaurant Name */}
             <h1 style={{
               fontSize: isMobile ? '16px' : '18px',
@@ -969,9 +969,9 @@ export default function App() {
                 borderRadius: '4px'
               }}>
                 <div style={{
-                  fontSize: isMobile ? '8px' : '9px', 
-                  color: '#666', 
-                  marginBottom: '8px', 
+                  fontSize: isMobile ? '8px' : '9px',
+                  color: '#666',
+                  marginBottom: '8px',
                   fontWeight: 'bold'
                 }}>
                   📍 INFOS GOOGLE MAPS
@@ -979,10 +979,10 @@ export default function App() {
 
                 {/* Google Rating */}
                 {selectedResto.googleRating && (
-                  <div style={{marginBottom: '6px', fontSize: isMobile ? '10px' : '11px'}}>
+                  <div style={{ marginBottom: '6px', fontSize: isMobile ? '10px' : '11px' }}>
                     ⭐ <strong>{selectedResto.googleRating.toFixed(1)}/5</strong>
                     {selectedResto.googleRatingCount > 0 && (
-                      <span style={{color: '#666', fontSize: isMobile ? '9px' : '10px'}}>
+                      <span style={{ color: '#666', fontSize: isMobile ? '9px' : '10px' }}>
                         {' '}({selectedResto.googleRatingCount} avis)
                       </span>
                     )}
@@ -991,7 +991,7 @@ export default function App() {
 
                 {/* Price Level */}
                 {selectedResto.googlePriceLevel && (
-                  <div style={{marginBottom: '6px', fontSize: isMobile ? '10px' : '11px'}}>
+                  <div style={{ marginBottom: '6px', fontSize: isMobile ? '10px' : '11px' }}>
                     💰 <strong>{getPriceDisplay(selectedResto.googlePriceLevel)}</strong>
                   </div>
                 )}
@@ -999,8 +999,8 @@ export default function App() {
                 {/* Address */}
                 {selectedResto.googleAddress && (
                   <div style={{
-                    marginBottom: '6px', 
-                    fontSize: isMobile ? '9px' : '10px', 
+                    marginBottom: '6px',
+                    fontSize: isMobile ? '9px' : '10px',
                     lineHeight: '1.3'
                   }}>
                     📍 {selectedResto.googleAddress}
@@ -1009,14 +1009,14 @@ export default function App() {
 
                 {/* Phone */}
                 {selectedResto.googlePhone && (
-                  <div style={{marginBottom: '6px', fontSize: isMobile ? '9px' : '10px'}}>
+                  <div style={{ marginBottom: '6px', fontSize: isMobile ? '9px' : '10px' }}>
                     📞 {selectedResto.googlePhone}
                   </div>
                 )}
 
                 {/* Website */}
                 {selectedResto.googleWebsite && (
-                  <div style={{marginBottom: '6px', fontSize: isMobile ? '9px' : '10px'}}>
+                  <div style={{ marginBottom: '6px', fontSize: isMobile ? '9px' : '10px' }}>
                     🌐 <a href={selectedResto.googleWebsite} target="_blank" rel="noopener noreferrer">
                       Site web
                     </a>
@@ -1025,12 +1025,12 @@ export default function App() {
 
                 {/* Opening Hours */}
                 {selectedResto.googleOpeningHours && selectedResto.googleOpeningHours.length > 0 && (
-                  <div style={{marginTop: '8px'}}>
-                    <details style={{fontSize: isMobile ? '9px' : '10px'}}>
-                      <summary style={{cursor: 'pointer', fontWeight: 'bold'}}>
+                  <div style={{ marginTop: '8px' }}>
+                    <details style={{ fontSize: isMobile ? '9px' : '10px' }}>
+                      <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>
                         🕒 Horaires d'ouverture
                       </summary>
-                      <div style={{marginTop: '4px', paddingLeft: '8px', lineHeight: '1.4'}}>
+                      <div style={{ marginTop: '4px', paddingLeft: '8px', lineHeight: '1.4' }}>
                         {selectedResto.googleOpeningHours.map((hour, idx) => (
                           <div key={idx}>{hour}</div>
                         ))}
@@ -1042,10 +1042,10 @@ export default function App() {
             )}
 
             {/* User Ratings Section */}
-            <div style={{marginBottom: '16px'}}>
+            <div style={{ marginBottom: '16px' }}>
               <div style={{
-                fontSize: isMobile ? '8px' : '9px', 
-                color: '#666', 
+                fontSize: isMobile ? '8px' : '9px',
+                color: '#666',
                 marginBottom: '6px',
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -1053,10 +1053,10 @@ export default function App() {
                 fontWeight: 'bold'
               }}>
                 <span>⭐ NOS NOTES ({selectedResto.userRatings?.length || 0})</span>
-                <button 
+                <button
                   className="nes-btn is-success"
                   style={{
-                    fontSize: isMobile ? '7px' : '8px', 
+                    fontSize: isMobile ? '7px' : '8px',
                     padding: isMobile ? '2px 6px' : '2px 8px'
                   }}
                   onClick={() => setShowRatingModal(true)}
@@ -1071,8 +1071,8 @@ export default function App() {
                   overflowY: 'auto'
                 }}>
                   {selectedResto.userRatings.map((rating, idx) => (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       style={{
                         padding: isMobile ? '6px' : '8px',
                         marginBottom: '6px',
@@ -1082,17 +1082,17 @@ export default function App() {
                       }}
                     >
                       <div style={{
-                        fontSize: isMobile ? '10px' : '11px', 
-                        fontWeight: 'bold', 
+                        fontSize: isMobile ? '10px' : '11px',
+                        fontWeight: 'bold',
                         marginBottom: '3px'
                       }}>
                         {rating.userName} - ⭐ {rating.rating}/5
                       </div>
                       {rating.comment && (
                         <div style={{
-                          fontSize: isMobile ? '9px' : '10px', 
-                          fontStyle: 'italic', 
-                          color: '#555', 
+                          fontSize: isMobile ? '9px' : '10px',
+                          fontStyle: 'italic',
+                          color: '#555',
                           lineHeight: '1.3'
                         }}>
                           "{rating.comment}"
@@ -1103,8 +1103,8 @@ export default function App() {
                 </div>
               ) : (
                 <div style={{
-                  fontSize: isMobile ? '9px' : '10px', 
-                  color: '#999', 
+                  fontSize: isMobile ? '9px' : '10px',
+                  color: '#999',
                   fontStyle: 'italic',
                   padding: isMobile ? '6px' : '8px',
                   textAlign: 'center',
@@ -1126,24 +1126,24 @@ export default function App() {
               borderRadius: '4px'
             }}>
               <div style={{
-                fontSize: isMobile ? '8px' : '9px', 
-                color: '#666', 
-                marginBottom: '8px', 
+                fontSize: isMobile ? '8px' : '9px',
+                color: '#666',
+                marginBottom: '8px',
                 fontWeight: 'bold'
               }}>
                 ℹ️ INFORMATIONS
               </div>
 
               {/* Type */}
-              <div style={{marginBottom: '8px'}}>
+              <div style={{ marginBottom: '8px' }}>
                 <div style={{
-                  fontSize: isMobile ? '8px' : '9px', 
-                  color: '#666', 
+                  fontSize: isMobile ? '8px' : '9px',
+                  color: '#666',
                   marginBottom: '2px'
                 }}>
                   TYPE DE CUISINE
                 </div>
-                <div style={{fontSize: isMobile ? '10px' : '11px'}}>
+                <div style={{ fontSize: isMobile ? '10px' : '11px' }}>
                   🍴 {selectedResto.type || 'Non spécifié'}
                 </div>
               </div>
@@ -1151,24 +1151,24 @@ export default function App() {
               {/* Halal Certification */}
               <div>
                 <div style={{
-                  fontSize: isMobile ? '8px' : '9px', 
-                  color: '#666', 
+                  fontSize: isMobile ? '8px' : '9px',
+                  color: '#666',
                   marginBottom: '2px'
                 }}>
                   CERTIFICATION HALAL
                 </div>
-                <div style={{fontSize: isMobile ? '10px' : '11px'}}>
+                <div style={{ fontSize: isMobile ? '10px' : '11px' }}>
                   ✅ {selectedResto.halal}
                 </div>
               </div>
             </div>
 
             {/* Actions */}
-            <div style={{marginTop: '16px'}}>
-              <a 
-                href={selectedResto.gmaps} 
-                target="_blank" 
-                rel="noopener noreferrer" 
+            <div style={{ marginTop: '16px' }}>
+              <a
+                href={selectedResto.gmaps}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="nes-btn is-primary"
                 style={{
                   width: '100%',
@@ -1185,9 +1185,9 @@ export default function App() {
         </div>
       )}
 
-      <MapContainer 
-        center={[PARIS_CENTER.lat, PARIS_CENTER.lng]} 
-        zoom={isMobile ? MAP_ZOOM_DEFAULT_MOBILE : MAP_ZOOM_DEFAULT_DESKTOP} 
+      <MapContainer
+        center={[PARIS_CENTER.lat, PARIS_CENTER.lng]}
+        zoom={isMobile ? MAP_ZOOM_DEFAULT_MOBILE : MAP_ZOOM_DEFAULT_DESKTOP}
         className="map-container"
         style={{
           width: (showSidePanel && !isMobile) ? 'calc(100% - 400px)' : '100%',
@@ -1196,50 +1196,50 @@ export default function App() {
       >
         <MapEvents setMapInstance={setMapRef} />
         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
-        
-{restos
-  .filter(r => r.coords && Array.isArray(r.coords) && r.coords.length === 2)
-  .map((r) => {
-    const isSelected = showSidePanel && selectedResto && selectedResto.id === r.id;
-    return (
-      <Marker 
-        key={r.id} 
-        position={r.coords} 
-        icon={createPixelPin(r.type)}
-        eventHandlers={{
-          click: () => handleMarkerClick(r)
-        }}
-      >
-        {/* Tooltip showing restaurant name - permanent on mobile or when selected and side panel is open */}
-        <Tooltip 
-          key={`tooltip-${r.id}-${isSelected ? 'selected' : 'unselected'}`}
-          permanent={isMobile || isSelected}
-          direction={isMobile ? "bottom" : "top"} 
-          offset={isMobile ? [0, 0] : [0, -20]}
-          opacity={0.95}
-          className="restaurant-label"
-        >
-          <div style={{
-            fontSize: isMobile ? '7px' : '10px',
-            fontWeight: 'bold',
-            padding: isMobile ? '2px 4px' : '3px 6px',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-            backgroundColor: 'white',
-            border: '2px solid #000',
-            borderRadius: '2px',
-            boxShadow: '2px 2px 0 rgba(0,0,0,0.25)',
-            maxWidth: isMobile ? '80px' : 'none',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
-          }}>
-            {r.name}
-          </div>
-        </Tooltip>
-      </Marker>
-    );
-  })
-}
+
+        {restos
+          .filter(r => r.coords && Array.isArray(r.coords) && r.coords.length === 2)
+          .map((r) => {
+            const isSelected = showSidePanel && selectedResto && selectedResto.id === r.id;
+            return (
+              <Marker
+                key={r.id}
+                position={r.coords}
+                icon={createPixelPin(r.type)}
+                eventHandlers={{
+                  click: () => handleMarkerClick(r)
+                }}
+              >
+                {/* Tooltip showing restaurant name - permanent on mobile or when selected and side panel is open */}
+                <Tooltip
+                  key={`tooltip-${r.id}-${isSelected ? 'selected' : 'unselected'}`}
+                  permanent={isMobile || isSelected}
+                  direction={isMobile ? "bottom" : "top"}
+                  offset={isMobile ? [0, 0] : [0, -20]}
+                  opacity={0.95}
+                  className="restaurant-label"
+                >
+                  <div style={{
+                    fontSize: isMobile ? '7px' : '10px',
+                    fontWeight: 'bold',
+                    padding: isMobile ? '2px 4px' : '3px 6px',
+                    whiteSpace: 'nowrap',
+                    textAlign: 'center',
+                    backgroundColor: 'white',
+                    border: '2px solid #000',
+                    borderRadius: '2px',
+                    boxShadow: '2px 2px 0 rgba(0,0,0,0.25)',
+                    maxWidth: isMobile ? '80px' : 'none',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}>
+                    {r.name}
+                  </div>
+                </Tooltip>
+              </Marker>
+            );
+          })
+        }
       </MapContainer>
 
       {/* ADD RATING MODAL - Responsive */}
@@ -1250,72 +1250,71 @@ export default function App() {
             padding: isMobile ? '12px' : '20px'
           }}>
             <h3 style={{
-              textAlign: 'center', 
-              fontSize: isMobile ? '14px' : '16px', 
+              textAlign: 'center',
+              fontSize: isMobile ? '14px' : '16px',
               marginBottom: '12px'
             }}>
               Ajouter ta note pour {selectedResto.name}
             </h3>
-            
+
             <form onSubmit={addUserRating}>
               <div className="nes-field">
-                <label style={{fontSize: isMobile ? '10px' : '11px'}}>
-                  Ton nom <span style={{color: 'red'}}>*</span>
+                <label style={{ fontSize: isMobile ? '10px' : '11px' }}>
+                  Ton nom <span style={{ color: 'red' }}>*</span>
                 </label>
-                <input 
-                  type="text" 
-                  className="nes-input" 
-                  placeholder="ex: John, Marie..." 
+                <input
+                  type="text"
+                  className="nes-input"
+                  placeholder="ex: John, Marie..."
                   value={ratingData.userName}
                   required
-                  onChange={e => setRatingData({...ratingData, userName: e.target.value})} 
-                  style={{fontSize: isMobile ? '11px' : '12px'}}
+                  onChange={e => setRatingData({ ...ratingData, userName: e.target.value })}
+                  style={{ fontSize: isMobile ? '11px' : '12px' }}
                 />
               </div>
 
               <div className="nes-field">
-                <label style={{fontSize: isMobile ? '10px' : '11px'}}>
-                  Ta note (1-5) <span style={{color: 'red'}}>*</span>
+                <label style={{ fontSize: isMobile ? '10px' : '11px' }}>
+                  Ta note (1-5) <span style={{ color: 'red' }}>*</span>
                 </label>
-                <input 
-                  type="number" 
-                  max="5" 
-                  min="1" 
-                  step="0.1"
-                  className="nes-input" 
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  className="nes-input"
+                  placeholder="ex: 4.5"
                   value={ratingData.rating}
+                  required
                   onChange={e => {
-                    const value = parseFloat(e.target.value);
-                    if (!isNaN(value) && value >= 1 && value <= 5) {
-                      setRatingData({...ratingData, rating: value});
-                    }
+                    const value = e.target.value;
+                    // Allow any value during typing (including empty, partial numbers, decimals)
+                    setRatingData({ ...ratingData, rating: value });
                   }}
-                  style={{fontSize: isMobile ? '11px' : '12px'}}
+                  style={{ fontSize: isMobile ? '11px' : '12px' }}
                 />
-                <small style={{fontSize: isMobile ? '8px' : '9px', color: '#666'}}>
+                <small style={{ fontSize: isMobile ? '8px' : '9px', color: '#666' }}>
                   Ex: 4.2, 3.7, 5.0
                 </small>
               </div>
 
               <div className="nes-field">
-                <label style={{fontSize: isMobile ? '10px' : '11px'}}>Ton avis</label>
-                <textarea 
-                  className="nes-textarea" 
+                <label style={{ fontSize: isMobile ? '10px' : '11px' }}>Ton avis</label>
+                <textarea
+                  className="nes-textarea"
                   placeholder="Qu'as-tu pensé de ce resto?"
                   value={ratingData.comment}
-                  onChange={e => setRatingData({...ratingData, comment: e.target.value})}
-                  style={{fontSize: isMobile ? '10px' : '11px'}}
+                  onChange={e => setRatingData({ ...ratingData, comment: e.target.value })}
+                  style={{ fontSize: isMobile ? '10px' : '11px' }}
                 ></textarea>
               </div>
 
               <div style={{
-                marginTop: '15px', 
-                display: 'flex', 
+                marginTop: '15px',
+                display: 'flex',
                 gap: isMobile ? '5px' : '10px',
                 flexDirection: isMobile ? 'column' : 'row'
               }}>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className={`nes-btn is-success ${loading ? 'is-disabled' : ''}`}
                   style={{
                     fontSize: isMobile ? '10px' : '11px',
@@ -1324,9 +1323,9 @@ export default function App() {
                 >
                   Ajouter ma note
                 </button>
-                <button 
-                  type="button" 
-                  className="nes-btn is-error" 
+                <button
+                  type="button"
+                  className="nes-btn is-error"
                   onClick={() => setShowRatingModal(false)}
                   style={{
                     fontSize: isMobile ? '10px' : '11px',
@@ -1349,29 +1348,29 @@ export default function App() {
             padding: isMobile ? '12px' : '20px'
           }}>
             <h3 style={{
-              textAlign: 'center', 
-              fontSize: isMobile ? '16px' : '18px', 
+              textAlign: 'center',
+              fontSize: isMobile ? '16px' : '18px',
               marginBottom: '15px'
             }}>
               Info Restaurant
             </h3>
-            
+
             <div className="nes-container is-rounded" style={{
-              marginTop: '15px', 
-              backgroundColor: '#f7f7f7', 
+              marginTop: '15px',
+              backgroundColor: '#f7f7f7',
               padding: isMobile ? '12px' : '15px'
             }}>
               <h4 style={{
-                fontSize: isMobile ? '12px' : '14px', 
-                marginBottom: '12px', 
+                fontSize: isMobile ? '12px' : '14px',
+                marginBottom: '12px',
                 fontWeight: 'bold'
               }}>
                 {previewData.name}
               </h4>
-              
+
               {previewData.rating && (
                 <div style={{
-                  marginBottom: '8px', 
+                  marginBottom: '8px',
                   fontSize: isMobile ? '10px' : '11px'
                 }}>
                   <strong>⭐ Note Google:</strong> {previewData.rating.toFixed(1)}/5 ({previewData.ratingCount} avis)
@@ -1380,42 +1379,42 @@ export default function App() {
 
               {previewData.priceLevel && (
                 <div style={{
-                  marginBottom: '8px', 
+                  marginBottom: '8px',
                   fontSize: isMobile ? '10px' : '11px'
                 }}>
                   <strong>💰 Prix:</strong> {getPriceDisplay(previewData.priceLevel)}
                 </div>
               )}
-              
+
               {previewData.cuisine && (
                 <div style={{
-                  marginBottom: '8px', 
+                  marginBottom: '8px',
                   fontSize: isMobile ? '10px' : '11px'
                 }}>
                   <strong>🍴 Type:</strong> {previewData.cuisine}
                 </div>
               )}
-              
+
               <div style={{
-                marginBottom: '8px', 
-                fontSize: isMobile ? '9px' : '10px', 
+                marginBottom: '8px',
+                fontSize: isMobile ? '9px' : '10px',
                 lineHeight: '1.4'
               }}>
                 <strong>📍 Adresse:</strong> {previewData.address}
               </div>
-              
+
               {previewData.phone && (
                 <div style={{
-                  marginBottom: '8px', 
+                  marginBottom: '8px',
                   fontSize: isMobile ? '10px' : '11px'
                 }}>
                   <strong>📞 Téléphone:</strong> {previewData.phone}
                 </div>
               )}
-              
+
               {previewData.website && (
                 <div style={{
-                  marginBottom: '8px', 
+                  marginBottom: '8px',
                   fontSize: isMobile ? '10px' : '11px'
                 }}>
                   <strong>🌐 Site web:</strong>{' '}
@@ -1424,14 +1423,14 @@ export default function App() {
                   </a>
                 </div>
               )}
-              
-              <div style={{marginTop: '12px'}}>
-                <a 
-                  href={previewData.gmapsUri || `https://www.google.com/maps?q=${previewData.lat},${previewData.lon}`} 
-                  target="_blank" 
+
+              <div style={{ marginTop: '12px' }}>
+                <a
+                  href={previewData.gmapsUri || `https://www.google.com/maps?q=${previewData.lat},${previewData.lon}`}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="nes-btn is-primary is-small"
-                  style={{fontSize: isMobile ? '9px' : '10px'}}
+                  style={{ fontSize: isMobile ? '9px' : '10px' }}
                 >
                   Voir sur Google Maps
                 </a>
@@ -1439,15 +1438,15 @@ export default function App() {
             </div>
 
             <div style={{
-              marginTop: '15px', 
-              display: 'flex', 
-              gap: isMobile ? '5px' : '10px', 
+              marginTop: '15px',
+              display: 'flex',
+              gap: isMobile ? '5px' : '10px',
               justifyContent: 'center',
               flexDirection: isMobile ? 'column' : 'row'
             }}>
-              <button 
-                className="nes-btn is-success" 
-                onClick={confirmAddRestaurant} 
+              <button
+                className="nes-btn is-success"
+                onClick={confirmAddRestaurant}
                 style={{
                   fontSize: isMobile ? '10px' : '11px',
                   flex: 1
@@ -1455,9 +1454,9 @@ export default function App() {
               >
                 ✓ Ajouter ce resto
               </button>
-              <button 
-                className="nes-btn is-error" 
-                onClick={() => setShowPreview(false)} 
+              <button
+                className="nes-btn is-error"
+                onClick={() => setShowPreview(false)}
                 style={{
                   fontSize: isMobile ? '10px' : '11px',
                   flex: 1
@@ -1474,7 +1473,7 @@ export default function App() {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content nes-container is-rounded" style={{
-            maxHeight: '90vh', 
+            maxHeight: '90vh',
             overflowY: 'auto',
             maxWidth: isMobile ? '95vw' : '500px',
             padding: isMobile ? '12px' : '20px'
@@ -1485,32 +1484,32 @@ export default function App() {
             }}>
               Nouveau Resto
             </h3>
-            
+
             <form onSubmit={saveResto}>
               <div className="nes-field">
-                <label style={{fontSize: isMobile ? '10px' : '11px'}}>
-                  Nom <span style={{color: 'red'}}>*</span>
+                <label style={{ fontSize: isMobile ? '10px' : '11px' }}>
+                  Nom <span style={{ color: 'red' }}>*</span>
                 </label>
-                <input 
-                  type="text" 
-                  className="nes-input" 
-                  value={formData.name} 
-                  required 
-                  onChange={e => setFormData({...formData, name: e.target.value})}
-                  style={{fontSize: isMobile ? '11px' : '12px'}}
+                <input
+                  type="text"
+                  className="nes-input"
+                  value={formData.name}
+                  required
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  style={{ fontSize: isMobile ? '11px' : '12px' }}
                 />
               </div>
 
               <div className="nes-field">
-                <label style={{fontSize: isMobile ? '10px' : '11px'}}>
-                  Type de cuisine <span style={{color: 'red'}}>*</span>
+                <label style={{ fontSize: isMobile ? '10px' : '11px' }}>
+                  Type de cuisine <span style={{ color: 'red' }}>*</span>
                 </label>
                 <div className="nes-select">
-                  <select 
-                    value={formData.type} 
+                  <select
+                    value={formData.type}
                     required
-                    onChange={e => setFormData({...formData, type: e.target.value})}
-                    style={{fontSize: isMobile ? '11px' : '12px'}}
+                    onChange={e => setFormData({ ...formData, type: e.target.value })}
+                    style={{ fontSize: isMobile ? '11px' : '12px' }}
                   >
                     <option value="">-- Sélectionner --</option>
                     {CUISINE_TYPES.map(cuisine => (
@@ -1519,13 +1518,13 @@ export default function App() {
                   </select>
                 </div>
                 {formData.type === "Autre" && (
-                  <input 
-                    type="text" 
-                    className="nes-input" 
-                    placeholder="Précisez le type de cuisine..." 
+                  <input
+                    type="text"
+                    className="nes-input"
+                    placeholder="Précisez le type de cuisine..."
                     value={formData.customType}
                     required
-                    onChange={e => setFormData({...formData, customType: e.target.value})}
+                    onChange={e => setFormData({ ...formData, customType: e.target.value })}
                     style={{
                       marginTop: '8px',
                       fontSize: isMobile ? '11px' : '12px'
@@ -1535,15 +1534,15 @@ export default function App() {
               </div>
 
               <div className="nes-field">
-                <label style={{fontSize: isMobile ? '10px' : '11px'}}>
-                  Certification Halal <span style={{color: 'red'}}>*</span>
+                <label style={{ fontSize: isMobile ? '10px' : '11px' }}>
+                  Certification Halal <span style={{ color: 'red' }}>*</span>
                 </label>
                 <div className="nes-select">
-                  <select 
-                    value={formData.halal} 
+                  <select
+                    value={formData.halal}
                     required
-                    onChange={e => setFormData({...formData, halal: e.target.value})}
-                    style={{fontSize: isMobile ? '11px' : '12px'}}
+                    onChange={e => setFormData({ ...formData, halal: e.target.value })}
+                    style={{ fontSize: isMobile ? '11px' : '12px' }}
                   >
                     <option value="">-- Sélectionner --</option>
                     <option value="AVS-Achahada..">Certif de confiance (AVS-Achahada..)</option>
@@ -1554,13 +1553,13 @@ export default function App() {
                   </select>
                 </div>
                 {formData.halal === "Autre" && (
-                  <input 
-                    type="text" 
-                    className="nes-input" 
-                    placeholder="Précisez ici..." 
+                  <input
+                    type="text"
+                    className="nes-input"
+                    placeholder="Précisez ici..."
                     value={formData.customHalal}
                     required
-                    onChange={e => setFormData({...formData, customHalal: e.target.value})}
+                    onChange={e => setFormData({ ...formData, customHalal: e.target.value })}
                     style={{
                       marginTop: '8px',
                       fontSize: isMobile ? '11px' : '12px'
@@ -1570,14 +1569,14 @@ export default function App() {
               </div>
 
               <div className="nes-field">
-                <label style={{fontSize: isMobile ? '10px' : '11px'}}>Lien Google Maps</label>
-                <input 
-                  type="url" 
-                  className="nes-input" 
-                  placeholder="https://goo.gl/maps/..." 
+                <label style={{ fontSize: isMobile ? '10px' : '11px' }}>Lien Google Maps</label>
+                <input
+                  type="url"
+                  className="nes-input"
+                  placeholder="https://goo.gl/maps/..."
                   value={formData.gmaps}
-                  onChange={e => setFormData({...formData, gmaps: e.target.value})}
-                  style={{fontSize: isMobile ? '11px' : '12px'}}
+                  onChange={e => setFormData({ ...formData, gmaps: e.target.value })}
+                  style={{ fontSize: isMobile ? '11px' : '12px' }}
                 />
               </div>
 
@@ -1590,12 +1589,12 @@ export default function App() {
                 borderRadius: '4px'
               }}>
                 <h4 style={{
-                  fontSize: isMobile ? '11px' : '12px', 
-                  marginBottom: '10px', 
+                  fontSize: isMobile ? '11px' : '12px',
+                  marginBottom: '10px',
                   fontWeight: 'bold',
                   color: '#d95941'
                 }}>
-                  ⭐ Ta note personnelle <span style={{color: 'red'}}>*</span>
+                  ⭐ Ta note personnelle <span style={{ color: 'red' }}>*</span>
                 </h4>
                 <p style={{
                   fontSize: isMobile ? '9px' : '10px',
@@ -1607,49 +1606,40 @@ export default function App() {
                 </p>
 
                 <div className="nes-field">
-                  <label style={{fontSize: isMobile ? '10px' : '11px'}}>
-                    Ton nom <span style={{color: 'red'}}>*</span>
+                  <label style={{ fontSize: isMobile ? '10px' : '11px' }}>
+                    Ton nom <span style={{ color: 'red' }}>*</span>
                   </label>
-                  <input 
-                    type="text" 
-                    className="nes-input" 
-                    placeholder="ex: John, Marie..." 
+                  <input
+                    type="text"
+                    className="nes-input"
+                    placeholder="ex: John, Marie..."
                     value={formData.initialUserName}
                     required
-                    onChange={e => setFormData({...formData, initialUserName: e.target.value})}
-                    style={{fontSize: isMobile ? '11px' : '12px'}}
+                    onChange={e => setFormData({ ...formData, initialUserName: e.target.value })}
+                    style={{ fontSize: isMobile ? '11px' : '12px' }}
                   />
                 </div>
 
                 <div className="nes-field">
-                  <label style={{fontSize: isMobile ? '10px' : '11px'}}>
-                    Ta note (1-5) <span style={{color: 'red'}}>*</span>
+                  <label style={{ fontSize: isMobile ? '10px' : '11px' }}>
+                    Ta note (1-5) <span style={{ color: 'red' }}>*</span>
                   </label>
-                  <input 
-                    type="number" 
-                    max="5" 
-                    min="1" 
-                    step="0.1"
-                    className="nes-input" 
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    className="nes-input"
                     placeholder="ex: 4.5"
                     value={formData.initialRating}
                     required
                     onChange={e => {
                       const value = e.target.value;
-                      // Allow empty string for user to clear field
-                      if (value === '') {
-                        setRatingData({...ratingData, rating: ''});
-                        return;
-                      }
-                      const numValue = parseFloat(value);
-                      if (!isNaN(numValue) && numValue >= 1 && numValue <= 5) {
-                        setRatingData({...ratingData, rating: value});
-                      }
+                      // Allow any value during typing (including empty, partial numbers, decimals)
+                      setFormData({ ...formData, initialRating: value });
                     }}
-                    style={{fontSize: isMobile ? '11px' : '12px'}}
+                    style={{ fontSize: isMobile ? '11px' : '12px' }}
                   />
                   <small style={{
-                    fontSize: isMobile ? '8px' : '9px', 
+                    fontSize: isMobile ? '8px' : '9px',
                     color: '#666'
                   }}>
                     Ex: 4.2, 3.7, 5.0
@@ -1657,27 +1647,27 @@ export default function App() {
                 </div>
 
                 <div className="nes-field">
-                  <label style={{fontSize: isMobile ? '10px' : '11px'}}>
+                  <label style={{ fontSize: isMobile ? '10px' : '11px' }}>
                     Commentaire sur ta note
                   </label>
-                  <textarea 
-                    className="nes-textarea" 
+                  <textarea
+                    className="nes-textarea"
                     placeholder="Qu'as-tu pensé de ce resto?"
                     value={formData.initialRatingComment}
-                    onChange={e => setFormData({...formData, initialRatingComment: e.target.value})}
-                    style={{fontSize: isMobile ? '10px' : '11px'}}
+                    onChange={e => setFormData({ ...formData, initialRatingComment: e.target.value })}
+                    style={{ fontSize: isMobile ? '10px' : '11px' }}
                   ></textarea>
                 </div>
               </div>
 
               <div style={{
-                marginTop: '20px', 
-                display: 'flex', 
+                marginTop: '20px',
+                display: 'flex',
                 gap: isMobile ? '5px' : '10px',
                 flexDirection: isMobile ? 'column' : 'row'
               }}>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className={`nes-btn is-success ${loading ? 'is-disabled' : ''}`}
                   style={{
                     fontSize: isMobile ? '10px' : '11px',
@@ -1686,9 +1676,9 @@ export default function App() {
                 >
                   Sauvegarder
                 </button>
-                <button 
-                  type="button" 
-                  className="nes-btn is-error" 
+                <button
+                  type="button"
+                  className="nes-btn is-error"
                   onClick={() => setShowModal(false)}
                   style={{
                     fontSize: isMobile ? '10px' : '11px',
