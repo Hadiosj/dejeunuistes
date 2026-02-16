@@ -34,3 +34,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Test coverage reports (tests themselves are committed)
+coverage/
+.nyc_output/
+*.lcov
