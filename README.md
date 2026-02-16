@@ -12,7 +12,7 @@ A Halal restaurant discovery and rating app made for Les Dejeunuistes.
 
 ## How to Use
 
-1. **Add**: Use the search box to find restaurants in google maps and add them, or manually add a restaurant by clicking the "+ Ajouter" button and filling the details
+1. **Add**: Click on the "+ Ajouter" button to search for your restaurants in google maps and add them with your personal notes and ratings
 3. **Explore**: Click on a restaurant marker to see its info and reviews in a side panel
 4. **Rate**: Add you personal ratings and reviews to any restaurant
 5. **Random**: Use the 🎲 button to get a random restaurant suggestion
