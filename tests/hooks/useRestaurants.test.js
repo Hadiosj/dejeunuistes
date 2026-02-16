@@ -2,28 +2,26 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useRestaurants } from '../../src/hooks/useRestaurants';
 
-// Mock Firebase/Firestore
-const mockGetDocs = vi.fn();
-const mockAddDoc = vi.fn();
-const mockUpdateDoc = vi.fn();
-const mockCollection = vi.fn();
-const mockQuery = vi.fn();
-const mockOrderBy = vi.fn();
-const mockDoc = vi.fn();
+// Get the mocked Firebase functions from the global setup
+// These are already mocked in tests/setup.js to prevent real Firebase connections
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  doc,
+  updateDoc
+} from 'firebase/firestore';
 
-vi.mock('firebase/firestore', () => ({
-  collection: (...args) => mockCollection(...args),
-  addDoc: (...args) => mockAddDoc(...args),
-  getDocs: (...args) => mockGetDocs(...args),
-  query: (...args) => mockQuery(...args),
-  orderBy: (...args) => mockOrderBy(...args),
-  doc: (...args) => mockDoc(...args),
-  updateDoc: (...args) => mockUpdateDoc(...args),
-}));
-
-vi.mock('../../src/firebase', () => ({
-  db: { _mock: 'db' },
-}));
+// Type cast to access vi.fn() methods
+const mockGetDocs = getDocs;
+const mockAddDoc = addDoc;
+const mockUpdateDoc = updateDoc;
+const mockCollection = collection;
+const mockQuery = query;
+const mockOrderBy = orderBy;
+const mockDoc = doc;
 
 // Helper to create mock restaurant data
 const createMockRestaurant = (overrides = {}) => ({
@@ -56,7 +54,7 @@ const createMockQuerySnapshot = (restaurants = []) => ({
   docs: restaurants.map((resto) => ({
     id: resto.id,
     data: () => {
-      const { id, ...data } = resto;
+      const { id: _id, ...data } = resto;
       return data;
     },
   })),

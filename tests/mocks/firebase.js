@@ -40,7 +40,7 @@ export const createMockQuerySnapshot = (restaurants = []) => ({
   docs: restaurants.map((resto) => ({
     id: resto.id,
     data: () => {
-      const { id, ...data } = resto;
+      const { id: _id, ...data } = resto;
       return data;
     },
   })),
