@@ -490,7 +490,7 @@ export default function App() {
   // Rating form state
   const [ratingData, setRatingData] = useState({
     userName: "",
-    rating: 5,
+    rating: "",
     comment: ""
   });
 
@@ -686,6 +686,10 @@ export default function App() {
     try {
       if (!ratingData.userName || ratingData.userName.trim() === "") {
         throw new Error("Veuillez entrer votre nom");
+      }
+
+      if (!ratingData.rating || ratingData.rating === "") {
+        throw new Error("Veuillez donner une note");
       }
 
       // VALIDATION: Check rating range (1-5)
@@ -1634,12 +1638,12 @@ export default function App() {
                       const value = e.target.value;
                       // Allow empty string for user to clear field
                       if (value === '') {
-                        setFormData({...formData, initialRating: ''});
+                        setRatingData({...ratingData, rating: ''});
                         return;
                       }
                       const numValue = parseFloat(value);
                       if (!isNaN(numValue) && numValue >= 1 && numValue <= 5) {
-                        setFormData({...formData, initialRating: value});
+                        setRatingData({...ratingData, rating: value});
                       }
                     }}
                     style={{fontSize: isMobile ? '11px' : '12px'}}
